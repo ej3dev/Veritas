@@ -1,0 +1,22 @@
+{
+    "name": "ej3dev/veritas",
+    "type": "library",
+    "description": "A pragmatic and concise validation library written in PHP",
+    "keywords": ["ej3", "ej3dev", "veritas", "validation", "validator", "verification", "verifier", "psr-4"],
+    "homepage": "https://github.com/ej3dev/Veritas",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Emilio José Jiménez",
+            "email": "ej3dev@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ej3dev\\Veritas\\": "src/"
+        }
+    }
+}
