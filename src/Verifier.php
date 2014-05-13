@@ -22,6 +22,11 @@ class Verifier {
     //--------------------------------------------------------------------------
     // Constructor
     //
+    /**
+     * Private constructor: new Verifier instances must be created with static is*() methods
+     * 
+     * @param mixed $data value to validate
+     */
     private function __construct($data) {
         $this->test = true;
         $this->data = $data;
@@ -31,10 +36,31 @@ class Verifier {
     //--------------------------------------------------------------------------
     // Fluent interface: initializer & finisher
     //
+    /**
+     * Generic validator that always verifies as true
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
     public static function is($data) {
         return (new Verifier($data));
     }
     
+    /**
+     * Validate the data against defined rules. Can be called with or without params:
+     * <pre>
+     * <code>verify()</code> return <code>true|false</code>
+     * <code>verify($onTrue)</code> return <code>$onTrue</code> if data loaded verify the rules or <code>false</code> in other case
+     * <code>verify($onTrue,$onFalse)</code> return <code>$onTrue</code> if data loaded verify the rules or <code>$onFalse</code> in other case
+     * </pre>
+     * 
+     * @return mixed Return:
+     * <pre>
+     * true|false when called without parameters
+     * mixed|false when called with one parameter
+     * mixed when called with two parameters
+     * </pre>
+     */
     public function verify() {
         $params = func_get_args();
         switch( count($params) ) {
@@ -71,6 +97,11 @@ class Verifier {
     //--------------------------------------------------------------------------
     // Types
     //
+    /**
+     * Checks a boolean value
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function boo() {
         if( $this->test == false ) return $this;
         
@@ -80,6 +111,12 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks a integer value
+     * 
+     * @param boolean $strict Enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function int($strict=false) {
         if( $this->test == false ) return $this;
         
@@ -90,6 +127,12 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks a numeric value. Integers and floats are numeric values
+     * 
+     * @param boolean $strict enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function num($strict=false) {
         if( $this->test == false ) return $this;
         
@@ -100,6 +143,11 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks a string value
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function str() {
         if( $this->test == false ) return $this;
         
@@ -109,6 +157,11 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable is an array
+     * 
+     * @return \ej3dev\Veritas\Verifier 
+     */
     public function arr() {
         if( $this->test == false ) return $this;
         
@@ -122,6 +175,12 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable is an object and if it's instance of the class <code>$instance</code>
+     * 
+     * @param string $instance class name of the object
+     * @return \ej3dev\Veritas\Verifier 
+     */
     public function obj($instance=null) {
         if( $this->test == false ) return $this;
         
@@ -132,6 +191,12 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable is a resource and if it's of resource type <code>$type</code>
+     * 
+     * @param string $type string representing of the resource type
+     * @return \ej3dev\Veritas\Verifier 
+     */
     public function res($type=null) {
         if( $this->test == false ) return $this;
         
@@ -145,6 +210,17 @@ class Verifier {
     //--------------------------------------------------------------------------
     // Rules
     //
+    /**
+     * Checks conditions about variable length. If the variable is an array, length 
+     * is the numbers of elements that contains.
+     * <br>Applicable only for <code>integer|double|string|array</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * 
+     * @param string $operator a comparison operator between: <code>=</code>,<code>==</code>,<code>==</code>,<code>!=</code>,<code>&lt;</code>,<code>&lt;=</code>,<code>&gt;</code>,<code>&gt;=</code>
+     * @param int    $value    value to compare 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$value</code> isn't an integer
+     */
     public function len($operator,$value) {
         if( !is_int($value) ) throw new \ErrorException('Verifier->len() invalid parameter: $value must be an integer');
         if( $this->test == false ) return $this;
@@ -172,6 +248,13 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable is equal to <code>$value</code>
+     * 
+     * @param mixed   $value  value to compare with
+     * @param boolean $strict enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function eq($value,$strict=false) {
         if( $this->test == false ) return $this;
         
@@ -190,6 +273,17 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable verifies the inequation defined by the operator <code>$operator</code> 
+     * and the right side value <code>$value</code>
+     * <br>Applicable only for <code>integer|double|numeric-string</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * 
+     * @param string $operator inequation operator between: <code>&lt;</code>,<code>&lt;=</code>,<code>&gt;</code>,<code>&gt;=</code>
+     * @param int    $value    value to compare 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$value</code> isn't a numeric value
+     */
     public function ineq($operator,$value) {
         if( !is_numeric($value) ) throw new \ErrorException('Verifier->ineq() invalid parameter: $value must be a numeric value');
         if( $this->test == false ) return $this;
@@ -217,6 +311,20 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable is inside a numeric interval or in a list of values. 
+     * String variables can only be checked against a list of values.
+     * <br>Applicable only for <code>integer|double|string</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * <br>This method can be called with a variable number of parameters:
+     * <pre>
+     * <code>in($interval)</code> where <code>$interval</code> is a string that defines a interval. For example: <code>[-1,1]</code>, <code>(0,10)</code> or <code>[2.618,3.142)</code>
+     * <code>in($p1,$p2...)</code> where <code>$p1,$p2...</code> is a list with a variable number of values
+     * <code>in($list)</code> where <code>$list</code> is an array with a list of values
+     * </pre>
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function in() {
         if( $this->test == false ) return $this;
         if( stripos('integer|double|string',$this->dataType) === false ) {
@@ -265,6 +373,20 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable is outside a numeric interval or outside a list of values. 
+     * String variables can only be checked against a list of values.
+     * <br>Applicable only for <code>integer|double|string</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * <br>This method can be called with a variable number of parameters:
+     * <pre>
+     * <code>out($interval)</code> where <code>$interval</code> is a string that defines a interval. For example: <code>[-1,1]</code>, <code>(0,10)</code> or <code>[2.618,3.142)</code>
+     * <code>out($p1,$p2...)</code> where <code>$p1,$p2...</code> is a list with a variable number of values
+     * <code>out($list)</code> where <code>$list</code> is an array with a list of values
+     * </pre>
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function out() {
         if( $this->test == false ) return $this;
         if( stripos('integer|double|string',$this->dataType) === false ) {
@@ -313,6 +435,20 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable contains one value or all values of a list. 
+     * For arrays this method checks the elements of the array against the given values
+     * <br>Applicable only for <code>string|array</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * <br>This method can be called with a variable number of parameters:
+     * <pre>
+     * <code>contain($p)</code> where <code>$p</code> is an integer or a string
+     * <code>contain($p1,$p2...)</code> where <code>$p1,$p2...</code> is a list with a variable number of values
+     * <code>contain($list)</code> where <code>$list</code> is an array with a list of values
+     * </pre>
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function contain() {
         if( $this->test == false ) return $this;
         if( stripos('string|array',$this->dataType) === false ) {
@@ -350,6 +486,26 @@ class Verifier {
         return $this;        
     }
     
+    public function containAny() {
+        //TODO
+        //Igual que contain pero no es necesario que contenga TODOS, con uno vale
+        //EL parámetro pasado siempre debe ser una lista o un array
+    }
+    
+    /**
+     * Checks if a variable doesn't contain one value or at least one of the values of a list. 
+     * For arrays this method checks the elements of the array against the given values
+     * <br>Applicable only for <code>string|array</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * <br>This method can be called with a variable number of parameters:
+     * <pre>
+     * <code>without($p)</code> where <code>$p</code> is an integer or a string
+     * <code>without($p1,$p2...)</code> where <code>$p1,$p2...</code> is a list with a variable number of values
+     * <code>without($list)</code> where <code>$list</code> is an array with a list of values
+     * </pre>
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function without() {
         if( $this->test == false ) return $this;
         if( stripos('string|array',$this->dataType) === false ) {
@@ -387,6 +543,17 @@ class Verifier {
         return $this;        
     }
     
+    /**
+     * Checks if a variable is an object of type <code>DataTime</code> or is a 
+     * string that represent a date/time formatted as <code>$format</code>
+     * <br>See available tokens to define format at {@link http://php.net/manual/en/function.date.php}
+     * <br>Applicable only for <code>string|object</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * 
+     * @param string $format date/time format. For example: "Y-m-d H:i:s" or "dmY"
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$format</code> isn't a string
+     */
     public function date($format=null) {
         if( $this->test == false ) return $this;
         if( stripos('string|object',$this->dataType) === false ) {
