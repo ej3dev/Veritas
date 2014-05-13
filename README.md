@@ -13,10 +13,10 @@ v::is($var)->dec()->in('[-1,1]')->verify();
 v::is($var)->arr()->key(8,'eight')->verify();
 
 // Is $var a string that represent a date in format year-month-day?
-v:is($var)->str()->date('Y-m-d')->verify();
+v::is($var)->str()->date('Y-m-d')->verify();
 
 // Is $var an object with a property called 'name'?
-v:is($var)->obj()->attr('name')->verify();
+v::is($var)->obj()->attr('name')->verify();
 
 //Is $mail a valid email address from Gmail or Yahoo?
 v:isEmail($mail)->contains('@gmail','@yahoo')->verify(); 
