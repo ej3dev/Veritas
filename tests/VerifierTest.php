@@ -348,6 +348,25 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is($arr)->contain('uno','dos')->verify() );
     }
     
+    public function testContainAny() {
+        //String
+        $str = 'My name is Emi';
+        $this->assertTrue( v::is($str)->containAny('Emi')->verify() );
+        $this->assertTrue( v::is($str)->containAny('name','Emi')->verify() );
+        $this->assertTrue( v::is($str)->containAny('name','surname')->verify() );
+        $this->assertFalse( v::is($str)->containAny('emi')->verify() );
+        $this->assertFalse( v::is($str)->containAny('surname','Jiménez')->verify() );
+        
+        //Array
+        $arr = array('one'=>'uno','two'=>2,3=>'tres');
+        $this->assertTrue( v::is($arr)->containAny('uno')->verify() );
+        $this->assertTrue( v::is($arr)->containAny(2,'tres')->verify() );
+        $this->assertTrue( v::is($arr)->containAny('tres',4)->verify() );
+        $this->assertFalse( v::is($arr)->containAny('TRES')->verify() );
+        $this->assertFalse( v::is($arr)->containAny(3)->verify() );
+        $this->assertFalse( v::is($arr)->containAny(1,'dos')->verify() );
+    }
+    
     public function testWithout() {
         //String
         $str = 'My name is Emi';

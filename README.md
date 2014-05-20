@@ -236,6 +236,11 @@ Documentation is work-in-progress. Meanwhile you can take a look to the examples
 
 
 
+Prefix `not` for validators and rules
+-------------------------------------
+
+
+
 Changelog
 ---------
 
