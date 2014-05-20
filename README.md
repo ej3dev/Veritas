@@ -170,13 +170,17 @@ Documentation is work-in-progress. Meanwhile you can take a look to the examples
 
 ### isEmail()
 
+### isUrl()
+
 ### isIp()
 
 ### isNull()
 
 ### isNotNull()
 
-### isUrl()
+### isEmpty()
+
+### isNotEmpty()
 
 
 
@@ -210,6 +214,8 @@ Documentation is work-in-progress. Meanwhile you can take a look to the examples
 
 ### contain()
 
+### containAny()
+
 ### date()
 
 ### eq()
@@ -238,11 +244,19 @@ Documentation is work-in-progress. Meanwhile you can take a look to the examples
 
 Prefix `not` for validators and rules
 -------------------------------------
+TODO
 
 
 
 Changelog
 ---------
+
+### v0.5.1 [Tu.20-May-2014]
+- Verifier.php code fully documented
+- `Verifier` constructor now support a optional parameter to configure init value for `$test` variable
+- New built-in validators: `isEmpty()`, `isNotEmpty()`
+- New rule: `containAny()`
+- Small code optimizations 
 
 ### v0.5.0 [Th.8-May-2014]
 - First public release
