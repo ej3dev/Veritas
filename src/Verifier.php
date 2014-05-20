@@ -489,7 +489,7 @@ class Verifier {
     public function containAny() {
         //TODO
         //Igual que contain pero no es necesario que contenga TODOS, con uno vale
-        //EL parámetro pasado siempre debe ser una lista o un array
+        //El parámetro pasado siempre debe ser una lista o un array
     }
     
     /**
@@ -583,6 +583,16 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if an array contains the given <code>$value</code>.
+     * For objects this method checks for an attribute with the given <code>$value</code>
+     * <br>Applicable only for <code>array|object</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * 
+     * @param mixed   $value  value to search for
+     * @param boolean $strict enable/disable strict mode to check also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function value($value,$strict=false) {
         if( $this->test == false ) return $this;
         if( stripos('array|object',$this->dataType) === false ) {
@@ -596,6 +606,21 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if an array contains a given key and optionally if this key is set 
+     * to one of the values of a given list. To checks for attributes in an object use {@see attr}
+     * <br>Applicable only for <code>array</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * <br>This method can be called with one or more parameters:
+     * <pre>
+     * <code>key($k)</code> where <code>$k</code> is a key to check for
+     * <code>key($k,$v)</code> where <code>$k</code> is the key and <code>$v</code> a value expected for the key
+     * <code>key($k,$v1,$v2...)</code> where <code>$k</code> is the key and <code>$v1,$v2...</code> a list of expected values
+     * </pre>
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when this method is called without parameters 
+     */
     public function key() {
         if( func_num_args() == 0 ) throw new \ErrorException('Verifier->key() invalid number of parameters: key() must have at least 1 parameter');
         if( $this->test == false ) return $this;
@@ -610,7 +635,7 @@ class Verifier {
             $test = array_key_exists($params[0],$this->data);
         } else {
             $key = array_shift($params);
-            $test = $this->key($key)->verify();
+            $test = self::is($this->data)->attr($key)->verify();
             if( $test && count($params) > 0 ) $test &= (array_search($this->data[$key],$params) !== false);
         }
         
@@ -618,6 +643,21 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if an object had a given attribute and optionally if this attribute is set 
+     * to one of the values of a given list. To checks for keys in an array use {@see key}
+     * <br>Applicable only for <code>object</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * <br>This method can be called with one or more parameters:
+     * <pre>
+     * <code>attr($a)</code> where <code>$a</code> is an attribute to check for
+     * <code>attr($a,$v)</code> where <code>$a</code> is the attribute and <code>$v</code> a value expected for the attribute
+     * <code>attr($a,$v1,$v2...)</code> where <code>$a</code> is the attribute and <code>$v1,$v2...</code> a list of expected values
+     * </pre>
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when this method is called without parameters 
+     */
     public function attr() {
         if( func_num_args() == 0 ) throw new \ErrorException('Verifier->attr() invalid number of parameters: attr() must have at least 1 parameter');
         if( $this->test == false ) return $this;
@@ -641,6 +681,14 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable passes the given filter
+     * <br>This method is a wrapper for the PHP function {@link http://us3.php.net/manual/en/function.filter-var.php filter_var}
+     * 
+     * @param int $filter {@see http://us3.php.net/manual/en/filter.filters.php available filters}
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$filter</code> isn't an integer
+     */
     public function filter($filter) {
         if( !is_int($filter) ) throw new \ErrorException('Verifier->filter() invalid parameter: $filter must be a integer');
         
@@ -650,6 +698,14 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable matches the regular expression <code>$pattern</code>
+     * <br>This method is a wrapper for the PHP function {@link http://us3.php.net/manual/en/function.preg-match.php preg_match}
+     * 
+     * @param type $pattern
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException
+     */
     public function regex($pattern) {
         if( !is_string($pattern) ) throw new \ErrorException('Verifier->regex() invalid parameter: $pattern must be a string');
         if( $this->test == false ) return $this;
