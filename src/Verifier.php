@@ -27,8 +27,8 @@ class Verifier {
      * 
      * @param mixed $data value to validate
      */
-    private function __construct($data) {
-        $this->test = true;
+    private function __construct($data,$test=true) {
+        $this->test = $test;
         $this->data = $data;
         $this->dataType = strtolower(gettype($data));
     }
@@ -74,24 +74,76 @@ class Verifier {
     //--------------------------------------------------------------------------
     // Build-in validators
     //
+    /**
+     * Create a validator that verifies as true when <code>$data</code> is a valid email
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
     public static function isEmail($data) {
         return (new Verifier($data))->filter(FILTER_VALIDATE_EMAIL);
     }
     
+    /**
+     * Create a validator that verifies as true when <code>$data</code> is a valid URL
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
     public static function isUrl($data) {
         return (new Verifier($data))->filter(FILTER_VALIDATE_URL);
     }
     
+    /**
+     * Create a validator that verifies as true when <code>$data</code> is a valid IP
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
     public static function isIp($data) {
         return (new Verifier($data))->filter(FILTER_VALIDATE_IP);
     }
     
+    /**
+     * Create a validator that verifies as true when <code>$data</code> is NULL
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
     public static function isNull($data) {
-        return (new Verifier($data))->eq(null,true);
+        return (new Verifier($data,is_null($data)));
     }
     
+    /**
+     * Create a validator that verifies as true when <code>$data</code> isn't NULL
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
     public static function isNotNull($data) {
-        return (new Verifier($data))->notEq(null,true);
+        return (new Verifier($data,!is_null($data)));
+    }
+    
+    /**
+     * Create a validator that verifies as true when <code>$data</code> is empty
+     * See {@link http://us3.php.net/manual/en/function.empty.php this} to know when a PHP variable is considered to be empty
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public static function isEmpty($data) {
+        return (new Verifier($data,empty($data)));
+    }
+    
+    /**
+     * Create a validator that verifies as true when <code>$data</code> isn't empty
+     * See {@link http://us3.php.net/manual/en/function.empty.php this} to know when a PHP variable is considered to be empty
+     * 
+     * @param mixed $data value to validate
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public static function isNotEmpty($data) {
+        return (new Verifier($data,!empty($data)));
     }
     
     //--------------------------------------------------------------------------
@@ -486,7 +538,53 @@ class Verifier {
         return $this;        
     }
     
+    /**
+     * Checks if a variable contains at least one value of a list. 
+     * For arrays this method checks the elements of the array against the given values
+     * <br>Applicable only for <code>string|array</code> variables. 
+     * For other variable types this rule verifies as <code>false</code>
+     * <br>This method can be called with a variable number of parameters:
+     * <pre>
+     * <code>containAny($p)</code> where <code>$p</code> is an integer or a string
+     * <code>containAny($p1,$p2...)</code> where <code>$p1,$p2...</code> is a list with a variable number of values
+     * <code>containAny($list)</code> where <code>$list</code> is an array with a list of values
+     * </pre>
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function containAny() {
+        if( $this->test == false ) return $this;
+        if( stripos('string|array',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $test = false;
+        $params = func_get_args();
+        switch( $this->dataType ) {
+            case 'string':
+                if( count($params) == 1 && is_string($params[0]) ) {
+                    $test = (strpos($this->data,$params[0]) !== false);
+                } elseif( count($params) == 1 && is_array($params[0]) ) {
+                    foreach($params[0] as $val) $test |= (strpos($this->data,$val) !== false);
+                } else {
+                    foreach($params as $val) $test |= (strpos($this->data,$val) !== false);
+                }
+                break;
+                
+            case 'array':
+                if( count($params) == 1 && is_array($params[0]) ) {
+                    foreach($params[0] as $val) $test &= (array_search($val,$this->data) !== false);
+                } elseif( count($params) == 1 ) {
+                    $test = (array_search($params[0],$this->data) !== false);
+                } else {
+                    foreach($params as $val) $test |= (array_search($val,$this->data) !== false);
+                }
+                break;
+        }
+        
+        $this->test &= $test;
+        return $this;        
         //TODO
         //Igual que contain pero no es necesario que contenga TODOS, con uno vale
         //El parámetro pasado siempre debe ser una lista o un array
@@ -635,7 +733,7 @@ class Verifier {
             $test = array_key_exists($params[0],$this->data);
         } else {
             $key = array_shift($params);
-            $test = self::is($this->data)->attr($key)->verify();
+            $test = self::is($this->data)->key($key)->verify();
             if( $test && count($params) > 0 ) $test &= (array_search($this->data[$key],$params) !== false);
         }
         
