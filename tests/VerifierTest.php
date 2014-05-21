@@ -60,6 +60,7 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         //Normal
         $this->assertTrue( v::is(-0xff)->int()->verify() );
         $this->assertTrue( v::is(-123)->int()->verify() );
+        $this->assertTrue( v::is(1.0)->int()->verify() );
         $this->assertTrue( v::is("-123")->int()->verify() );
         $this->assertFalse( v::is(3.14)->int()->verify() );
         $this->assertFalse( v::is("3.14")->int()->verify() );
@@ -68,6 +69,7 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         //Strict
         $this->assertTrue( v::is(-0xff)->int(true)->verify() );
         $this->assertTrue( v::is(-123)->int(true)->verify() );
+        $this->assertFalse( v::is(1.0)->int(true)->verify() );
         $this->assertFalse( v::is("-123")->int(true)->verify() );
         $this->assertFalse( v::is(3.14)->int(true)->verify() );
         $this->assertFalse( v::is("3.14")->int(true)->verify() );
@@ -77,16 +79,16 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
     public function testDec() {
         //Normal
         $this->assertTrue( v::is(3.14)->dec()->verify() );
-        $this->assertTrue( v::is(1.0)->dec()->verify() );
         $this->assertTrue( v::is("3.14")->dec()->verify() );
+        $this->assertFalse( v::is(1.0)->dec()->verify() );
         $this->assertFalse( v::is(321)->dec()->verify() );
         $this->assertFalse( v::is("654")->dec()->verify() );
         $this->assertFalse( v::is("abc")->dec()->verify() );
         
         //Strict
         $this->assertTrue( v::is(3.14)->dec(true)->verify() );
-        $this->assertTrue( v::is(1.0)->dec(true)->verify() );
         $this->assertFalse( v::is("3.14")->dec(true)->verify() );
+        $this->assertFalse( v::is(1.0)->dec(true)->verify() );
         $this->assertFalse( v::is(321)->dec(true)->verify() );
         $this->assertFalse( v::is("654")->dec(true)->verify() );
         $this->assertFalse( v::is("abc")->dec(true)->verify() );

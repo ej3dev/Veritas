@@ -180,7 +180,8 @@ class Verifier {
     }
     
     /**
-     * Checks a decimal value. A decimal value is any numeric value with decimal pointer
+     * Checks a decimal value. A decimal value is any numeric value with fractional 
+     * part (non-zero value to the right of the decimal pointer)
      * 
      * @param boolean $strict enable/disable strict mode to validate also variable type
      * @return \ej3dev\Veritas\Verifier
@@ -188,7 +189,7 @@ class Verifier {
     public function dec($strict=false) {
         if( $this->test == false ) return $this;
         
-        $test = (new Verifier($this->data))->num($strict)->notInt($strict)->verify();
+        $test = (new Verifier($this->data))->num($strict)->notInt()->verify();
         
         $this->test &= $test;
         return $this;
@@ -817,7 +818,7 @@ class Verifier {
      * 
      * @param type $pattern
      * @return \ej3dev\Veritas\Verifier
-     * @throws \ErrorException
+     * @throws \ErrorException when parameter <code>$pattern</code> isn't a string
      */
     public function regex($pattern) {
         if( !is_string($pattern) ) throw new \ErrorException('Verifier->regex() invalid parameter: $pattern must be a string');
@@ -832,6 +833,122 @@ class Verifier {
         $this->test &= $test;
         return $this;
     }
+    
+    //--------------------------------------------------------------------------
+    // Types with prefix "not"
+    //
+    
+    /**
+     * Works as the opposite of {@see boo()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notBoo() {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->boo()->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see int()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notInt($strict=false) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->int($strict)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see dec()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notDec($strict=false) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->dec($strict)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see num()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notNum($strict=false) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->num($strict)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see str()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notStr() {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->str()->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see arr()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notArr() {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->arr()->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see obj()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notObj($instance=null) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->obj($instance)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see res()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notRes($type=null) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->res($type)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }    
     
     //--------------------------------------------------------------------------
     // Helper methods

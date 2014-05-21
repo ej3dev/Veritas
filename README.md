@@ -253,9 +253,10 @@ TODO
 Changelog
 ---------
 
-### v0.5.2 [dev][Xx.yy-Zzz-2014]
-- Support for prefix `not` in all rules and type validators
+### v0.6.0 [dev][Xx.yy-Zzz-2014]
 - New validator type: `dec()`
+- Added support for prefix `not` in all rules and type validators
+- Added support for Badge Poser tags in README.md
 - Small code fixed
 
 ### v0.5.1 [master][Tu.20-May-2014]
