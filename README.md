@@ -1,6 +1,8 @@
 ej3dev\Veritas
-=======
+==============
 
+[![Latest Stable Version](https://poser.pugx.org/ej3dev/veritas/v/stable.png)](https://packagist.org/packages/ej3dev/veritas) [![Total Downloads](https://poser.pugx.org/ej3dev/veritas/downloads.png)](https://packagist.org/packages/ej3dev/veritas) [![Latest Unstable Version](https://poser.pugx.org/ej3dev/veritas/v/unstable.png)](https://packagist.org/packages/ej3dev/veritas) [![License](https://poser.pugx.org/ej3dev/veritas/license.png)](https://packagist.org/packages/ej3dev/veritas)
+ 
 A pragmatic and concise validation library written in PHP.
 
 The idea behind [**Veritas**](http://en.wikipedia.org/wiki/Veritas) is implement a flexible easy to use validation engine so you can write validation code as easy as you can build questions in everyday language.

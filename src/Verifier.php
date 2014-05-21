@@ -8,7 +8,7 @@ namespace ej3dev\Veritas;
  * @author Emilio José Jiménez <ej3dev@gmail.com>
  * @copyright Copyright (c) 2014 Emilio José Jiménez
  * @license http://opensource.org/licenses/MIT MIT License
- * @version v0.5.0
+ * @version v0.5.1
  */
 class Verifier {
     
