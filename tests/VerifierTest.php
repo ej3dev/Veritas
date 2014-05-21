@@ -74,6 +74,24 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is("0xff")->int(true)->verify() );
     }
     
+    public function testDec() {
+        //Normal
+        $this->assertTrue( v::is(3.14)->dec()->verify() );
+        $this->assertTrue( v::is(1.0)->dec()->verify() );
+        $this->assertTrue( v::is("3.14")->dec()->verify() );
+        $this->assertFalse( v::is(321)->dec()->verify() );
+        $this->assertFalse( v::is("654")->dec()->verify() );
+        $this->assertFalse( v::is("abc")->dec()->verify() );
+        
+        //Strict
+        $this->assertTrue( v::is(3.14)->dec(true)->verify() );
+        $this->assertTrue( v::is(1.0)->dec(true)->verify() );
+        $this->assertFalse( v::is("3.14")->dec(true)->verify() );
+        $this->assertFalse( v::is(321)->dec(true)->verify() );
+        $this->assertFalse( v::is("654")->dec(true)->verify() );
+        $this->assertFalse( v::is("abc")->dec(true)->verify() );
+    }
+    
     public function testNum() {
         //Normal
         $this->assertTrue( v::is(0xff)->num()->verify() );

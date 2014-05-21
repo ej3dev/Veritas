@@ -8,7 +8,7 @@ namespace ej3dev\Veritas;
  * @author Emilio José Jiménez <ej3dev@gmail.com>
  * @copyright Copyright (c) 2014 Emilio José Jiménez
  * @license http://opensource.org/licenses/MIT MIT License
- * @version v0.5.0
+ * @version v0.5.2
  */
 class Verifier {
     
@@ -178,6 +178,21 @@ class Verifier {
         $this->test &= $test;
         return $this;
     }
+    
+    /**
+     * Checks a decimal value. A decimal value is any numeric value with decimal pointer
+     * 
+     * @param boolean $strict enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function dec($strict=false) {
+        if( $this->test == false ) return $this;
+        
+        $test = (new Verifier($this->data))->num($strict)->notInt($strict)->verify();
+        
+        $this->test &= $test;
+        return $this;
+    }    
     
     /**
      * Checks a numeric value. Integers and floats are numeric values
