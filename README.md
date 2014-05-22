@@ -42,7 +42,7 @@ Use [Composer](https://getcomposer.org) dependency Manager for PHP. Add the foll
 
 ```json
 "require": {
-    "ej3dev/veritas": "~0.5"
+    "ej3dev/veritas": "~0.6"
 }
 ```
 
