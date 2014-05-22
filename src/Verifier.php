@@ -8,7 +8,7 @@ namespace ej3dev\Veritas;
  * @author Emilio José Jiménez <ej3dev@gmail.com>
  * @copyright Copyright (c) 2014 Emilio José Jiménez
  * @license http://opensource.org/licenses/MIT MIT License
- * @version v0.5.2
+ * @version v0.6.0
  */
 class Verifier {
     
@@ -164,6 +164,20 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see boo()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notBoo() {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->boo()->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
      * Checks a integer value
      * 
      * @param boolean $strict Enable/disable strict mode to validate also variable type
@@ -174,6 +188,21 @@ class Verifier {
         
         $test = (is_numeric($this->data) && (int)$this->data == $this->data);
         if( $strict ) $test &= ($this->dataType == 'integer');
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see int()} validator by applying it the logical negation operator
+     * 
+     * @param boolean $strict Enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notInt($strict=false) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->int($strict)->verify() );
         
         $this->test &= $test;
         return $this;
@@ -193,7 +222,22 @@ class Verifier {
         
         $this->test &= $test;
         return $this;
-    }    
+    }
+    
+    /**
+     * Works as the opposite of {@see dec()} validator by applying it the logical negation operator
+     * 
+     * @param boolean $strict enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notDec($strict=false) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->dec($strict)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
     
     /**
      * Checks a numeric value. Integers and floats are numeric values
@@ -212,6 +256,21 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see num()} validator by applying it the logical negation operator
+     * 
+     * @param boolean $strict enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notNum($strict=false) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->num($strict)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
      * Checks a string value
      * 
      * @return \ej3dev\Veritas\Verifier
@@ -220,6 +279,20 @@ class Verifier {
         if( $this->test == false ) return $this;
         
         $test = is_string($this->data);
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see str()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notStr() {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->str()->verify() );
         
         $this->test &= $test;
         return $this;
@@ -244,6 +317,20 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see arr()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notArr() {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->arr()->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
      * Checks if a variable is an object and if it's instance of the class <code>$instance</code>
      * 
      * @param string $instance class name of the object
@@ -254,6 +341,21 @@ class Verifier {
         
         $test = is_object($this->data);
         if( $test && !is_null($instance) ) $test &= ($this->data instanceof $instance);
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see obj()} validator by applying it the logical negation operator
+     * 
+     * @param string $instance class name of the object
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notObj($instance=null) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->obj($instance)->verify() );
         
         $this->test &= $test;
         return $this;
@@ -274,6 +376,21 @@ class Verifier {
         $this->test &= $test;
         return $this;
     }
+    
+    /**
+     * Works as the opposite of {@see res()} validator by applying it the logical negation operator
+     * 
+     * @param string $type string representing of the resource type
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notRes($type=null) {
+        if( $this->test == false ) return $this;
+        
+        $test = !( (new Verifier($this->data))->res($type)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }    
     
     //--------------------------------------------------------------------------
     // Rules
@@ -317,6 +434,28 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see len()} validator by applying it the logical negation operator
+     * 
+     * @param string $operator a comparison operator between: <code>=</code>,<code>==</code>,<code>==</code>,<code>!=</code>,<code>&lt;</code>,<code>&lt;=</code>,<code>&gt;</code>,<code>&gt;=</code>
+     * @param int    $value    value to compare 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$value</code> isn't an integer
+     */
+    public function notLen($operator,$value) {
+        if( !is_int($value) ) throw new \ErrorException('Verifier->notLen() invalid parameter: $value must be an integer');
+        if( $this->test == false ) return $this;
+        if( stripos('integer|double|string|array',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $test = !( (new Verifier($this->data))->len($operator,$value)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
      * Checks if a variable is equal to <code>$value</code>
      * 
      * @param mixed   $value  value to compare with
@@ -332,6 +471,13 @@ class Verifier {
         return $this;
     }
     
+    /**
+     * Checks if a variable is not equal to <code>$value</code>
+     * 
+     * @param mixed   $value  value to compare with
+     * @param boolean $strict enable/disable strict mode to validate also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
     public function notEq($value,$strict=false) {
         if( $this->test == false ) return $this;
         
@@ -374,6 +520,32 @@ class Verifier {
             default:
                 $test = false;
         }
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see ineq()} validator by applying it the logical negation operator
+     * 
+     * @param string $operator inequation operator between: <code>&lt;</code>,<code>&lt;=</code>,<code>&gt;</code>,<code>&gt;=</code>
+     * @param int    $value    value to compare 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$value</code> isn't a numeric value
+     */
+    public function notIneq($operator,$value) {
+        if( !is_numeric($value) ) throw new \ErrorException('Verifier->notIneq() invalid parameter: $value must be a numeric value');
+        if( $this->test == false ) return $this;
+        if( stripos('integer|double|string',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        if( $this->dataType == 'string' && !is_numeric($this->data) ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $test = !( (new Verifier($this->data))->ineq($operator,$value)->verify() );
         
         $this->test &= $test;
         return $this;
@@ -442,6 +614,25 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see in()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notIn() {
+        if( $this->test == false ) return $this;
+        if( stripos('integer|double|string',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $params = func_get_args();
+        $test = !( (new Verifier($this->data))->in($params)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }    
+    
+    /**
      * Checks if a variable is outside a numeric interval or outside a list of values. 
      * String variables can only be checked against a list of values.
      * <br>Applicable only for <code>integer|double|string</code> variables. 
@@ -504,6 +695,25 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see out()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notOut() {
+        if( $this->test == false ) return $this;
+        if( stripos('integer|double|string',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $params = func_get_args();
+        $test = !( (new Verifier($this->data))->out($params)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
      * Checks if a variable contains one value or all values of a list. 
      * For arrays this method checks the elements of the array against the given values
      * <br>Applicable only for <code>string|array</code> variables. 
@@ -549,6 +759,25 @@ class Verifier {
                 }
                 break;
         }
+        
+        $this->test &= $test;
+        return $this;        
+    }
+    
+    /**
+     * Works as the opposite of {@see contain()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notContain() {
+        if( $this->test == false ) return $this;
+        if( stripos('string|array',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $params = func_get_args();
+        $test = !( (new Verifier($this->data))->contain($params)->verify() );
         
         $this->test &= $test;
         return $this;        
@@ -601,10 +830,26 @@ class Verifier {
         
         $this->test &= $test;
         return $this;        
-        //TODO
-        //Igual que contain pero no es necesario que contenga TODOS, con uno vale
-        //El parámetro pasado siempre debe ser una lista o un array
     }
+    
+    /**
+     * Works as the opposite of {@see containAny()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notContainAny() {
+        if( $this->test == false ) return $this;
+        if( stripos('string|array',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $params = func_get_args();
+        $test = !( (new Verifier($this->data))->containAny($params)->verify() );
+        
+        $this->test &= $test;
+        return $this;        
+    }    
     
     /**
      * Checks if a variable doesn't contain one value or at least one of the values of a list. 
@@ -658,6 +903,25 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see without()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notWithout() {
+        if( $this->test == false ) return $this;
+        if( stripos('string|array',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $params = func_get_args();
+        $test = !( (new Verifier($this->data))->without($params)->verify() );
+        
+        $this->test &= $test;
+        return $this;        
+    }
+    
+    /**
      * Checks if a variable is an object of type <code>DataTime</code> or is a 
      * string that represent a date/time formatted as <code>$format</code>
      * <br>See available tokens to define format at {@link http://php.net/manual/en/function.date.php}
@@ -669,6 +933,7 @@ class Verifier {
      * @throws \ErrorException when parameter <code>$format</code> isn't a string
      */
     public function date($format=null) {
+        if( !is_null($format) && !is_string($format) ) throw new \ErrorException('Verifier->date() invalid parameter: $format must be a string');
         if( $this->test == false ) return $this;
         if( stripos('string|object',$this->dataType) === false ) {
             $this->test = false;
@@ -680,8 +945,6 @@ class Verifier {
             case 'string':
                 if( is_null($format) ) {
                     $test = (strtotime($this->data) !== false);
-                } elseif( !is_string($format) ) {
-                    throw new \ErrorException('Verifier->date() invalid parameter: $format must be a string');
                 } else {
                     $dateFromFormat = \DateTime::createFromFormat($format,$this->data);
                     $test = ($dateFromFormat && $this->data === date($format,$dateFromFormat->getTimestamp()) );
@@ -696,6 +959,27 @@ class Verifier {
         $this->test &= $test;
         return $this;
     }
+    
+    /**
+     * Works as the opposite of {@see date()} validator by applying it the logical negation operator
+     * 
+     * @param string $format date/time format. For example: "Y-m-d H:i:s" or "dmY"
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$format</code> isn't a string
+     */
+    public function notDate($format=null) {
+        if( !is_null($format) && !is_string($format) ) throw new \ErrorException('Verifier->notDate() invalid parameter: $format must be a string');
+        if( $this->test == false ) return $this;
+        if( stripos('string|object',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $test = !( (new Verifier($this->data))->date($format)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }    
     
     /**
      * Checks if an array contains the given <code>$value</code>.
@@ -715,6 +999,26 @@ class Verifier {
         }
         
         $test = (array_search($value,(array)$this->data,$strict) !== false);
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see value()} validator by applying it the logical negation operator
+     * 
+     * @param mixed   $value  value to search for
+     * @param boolean $strict enable/disable strict mode to check also variable type
+     * @return \ej3dev\Veritas\Verifier
+     */
+    public function notValue($value,$strict=false) {
+        if( $this->test == false ) return $this;
+        if( stripos('array|object',$this->dataType) === false ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $test = !( (new Verifier($this->data))->value($value,$strict)->verify() );
         
         $this->test &= $test;
         return $this;
@@ -752,6 +1056,27 @@ class Verifier {
             $test = self::is($this->data)->key($key)->verify();
             if( $test && count($params) > 0 ) $test &= (array_search($this->data[$key],$params) !== false);
         }
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see key()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when this method is called without parameters 
+     */
+    public function notKey() {
+        if( func_num_args() == 0 ) throw new \ErrorException('Verifier->notKey() invalid number of parameters: key() must have at least 1 parameter');
+        if( $this->test == false ) return $this;
+        if( $this->dataType != 'array' ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $params = func_get_args();
+        $test = !( (new Verifier($this->data))->key($params)->verify() );
         
         $this->test &= $test;
         return $this;
@@ -796,6 +1121,27 @@ class Verifier {
     }
     
     /**
+     * Works as the opposite of {@see attr()} validator by applying it the logical negation operator
+     * 
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when this method is called without parameters 
+     */
+    public function notAttr() {
+        if( func_num_args() == 0 ) throw new \ErrorException('Verifier->notAttr() invalid number of parameters: attr() must have at least 1 parameter');
+        if( $this->test == false ) return $this;
+        if( $this->dataType != 'object' ) {
+            $this->test = false;
+            return $this;
+        }
+        
+        $params = func_get_args();
+        $test = !( (new Verifier($this->data))->attr($params)->verify() );
+        
+        $this->test &= $test;
+        return $this;
+    }    
+    
+    /**
      * Checks if a variable passes the given filter
      * <br>This method is a wrapper for the PHP function {@link http://us3.php.net/manual/en/function.filter-var.php filter_var}
      * 
@@ -807,6 +1153,22 @@ class Verifier {
         if( !is_int($filter) ) throw new \ErrorException('Verifier->filter() invalid parameter: $filter must be a integer');
         
         $test = (filter_var($this->data,$filter) !== false);
+        
+        $this->test &= $test;
+        return $this;
+    }
+    
+    /**
+     * Works as the opposite of {@see filter()} validator by applying it the logical negation operator
+     * 
+     * @param int $filter {@see http://us3.php.net/manual/en/filter.filters.php available filters}
+     * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$filter</code> isn't an integer
+     */
+    public function notFilter($filter) {
+        if( !is_int($filter) ) throw new \ErrorException('Verifier->notFilter() invalid parameter: $filter must be a integer');
+        
+        $test = !( (new Verifier($this->data))->filter($filter)->verify() );
         
         $this->test &= $test;
         return $this;
@@ -834,124 +1196,25 @@ class Verifier {
         return $this;
     }
     
-    //--------------------------------------------------------------------------
-    // Types with prefix "not"
-    //
-    
     /**
-     * Works as the opposite of {@see boo()} validator by applying it the logical negation operator
+     * Works as the opposite of {@see regex()} validator by applying it the logical negation operator
      * 
+     * @param type $pattern
      * @return \ej3dev\Veritas\Verifier
+     * @throws \ErrorException when parameter <code>$pattern</code> isn't a string
      */
-    public function notBoo() {
+    public function notRegex($pattern) {
+        if( !is_string($pattern) ) throw new \ErrorException('Verifier->notRegex() invalid parameter: $pattern must be a string');
         if( $this->test == false ) return $this;
+        if( $this->dataType != 'string' ) {
+            $this->test = false;
+            return $this;
+        }
         
-        $test = !( (new Verifier($this->data))->boo()->verify() );
+        $test = !( (new Verifier($this->data))->regex($pattern)->verify() );
         
         $this->test &= $test;
         return $this;
     }
-    
-    /**
-     * Works as the opposite of {@see int()} validator by applying it the logical negation operator
-     * 
-     * @return \ej3dev\Veritas\Verifier
-     */
-    public function notInt($strict=false) {
-        if( $this->test == false ) return $this;
-        
-        $test = !( (new Verifier($this->data))->int($strict)->verify() );
-        
-        $this->test &= $test;
-        return $this;
-    }
-    
-    /**
-     * Works as the opposite of {@see dec()} validator by applying it the logical negation operator
-     * 
-     * @return \ej3dev\Veritas\Verifier
-     */
-    public function notDec($strict=false) {
-        if( $this->test == false ) return $this;
-        
-        $test = !( (new Verifier($this->data))->dec($strict)->verify() );
-        
-        $this->test &= $test;
-        return $this;
-    }
-    
-    /**
-     * Works as the opposite of {@see num()} validator by applying it the logical negation operator
-     * 
-     * @return \ej3dev\Veritas\Verifier
-     */
-    public function notNum($strict=false) {
-        if( $this->test == false ) return $this;
-        
-        $test = !( (new Verifier($this->data))->num($strict)->verify() );
-        
-        $this->test &= $test;
-        return $this;
-    }
-    
-    /**
-     * Works as the opposite of {@see str()} validator by applying it the logical negation operator
-     * 
-     * @return \ej3dev\Veritas\Verifier
-     */
-    public function notStr() {
-        if( $this->test == false ) return $this;
-        
-        $test = !( (new Verifier($this->data))->str()->verify() );
-        
-        $this->test &= $test;
-        return $this;
-    }
-    
-    /**
-     * Works as the opposite of {@see arr()} validator by applying it the logical negation operator
-     * 
-     * @return \ej3dev\Veritas\Verifier
-     */
-    public function notArr() {
-        if( $this->test == false ) return $this;
-        
-        $test = !( (new Verifier($this->data))->arr()->verify() );
-        
-        $this->test &= $test;
-        return $this;
-    }
-    
-    /**
-     * Works as the opposite of {@see obj()} validator by applying it the logical negation operator
-     * 
-     * @return \ej3dev\Veritas\Verifier
-     */
-    public function notObj($instance=null) {
-        if( $this->test == false ) return $this;
-        
-        $test = !( (new Verifier($this->data))->obj($instance)->verify() );
-        
-        $this->test &= $test;
-        return $this;
-    }
-    
-    /**
-     * Works as the opposite of {@see res()} validator by applying it the logical negation operator
-     * 
-     * @return \ej3dev\Veritas\Verifier
-     */
-    public function notRes($type=null) {
-        if( $this->test == false ) return $this;
-        
-        $test = !( (new Verifier($this->data))->res($type)->verify() );
-        
-        $this->test &= $test;
-        return $this;
-    }    
-    
-    //--------------------------------------------------------------------------
-    // Helper methods
-    //
     
 }
