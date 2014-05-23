@@ -159,7 +159,45 @@ v::is($value)->str()->in('one','two','three')->verify(); //true
 
 ### Output
 
-TODO
+All validators and rules returns the `Verifier` instance to support [fluent interface](http://en.wikipedia.org/wiki/Fluent_interface) via [method chaining](http://en.wikipedia.org/wiki/Method_chaining). `verify()` method is used to get the validation final result after apply all chained rules and validators. By default, `verify()` return `true` or `false` but you can change this behavior calling the method with one or two parameters. For example:
+
+```php
+$pi = 3.1416;
+$euler = 2.7183
+
+//Default
+v::is($pi)->ineq('>',$euler)->verify(); //Return: true
+v::is($pi)->eq($euler)->verify(); //Return: false
+
+//One parameter
+v::is("8")->str()->num()->verify(
+	'String with numeric value'
+); //Return: 'String with numeric value'
+v::is("eight")->str()->num()->verify(
+	'String with numeric value'
+); //Return: false
+
+//Two parameters
+v::is($pi)->in('[3.14,3.142)')->verify(
+	'Number too close to pi',
+	'This number is not pi'
+); //Return: Number too close to pi
+v::is($euler)->in('[3.14,3.142)')->verify(
+	'Number too close to pi',
+	'This number is not pi'
+); //Return: This number is not pi
+```
+
+Parameters of `verify()` can be [anonymous functions](http://www.php.net/manual/en/functions.anonymous.php):
+
+```php
+$email = 'mail@domain.com';
+v::isEmail($email)->verify(
+	function($email) { mail($email,'Hello','Lorem ipsum dolor sit amet...'); },
+	function() { exit('Error: Invalid email address'); }
+);
+
+```
 
 
 
@@ -234,8 +272,6 @@ Documentation is work-in-progress. Meanwhile you can take a look to the examples
 
 ### len()
 
-### notEq()
-
 ### out()
 
 ### regex()
@@ -248,17 +284,33 @@ Documentation is work-in-progress. Meanwhile you can take a look to the examples
 
 Prefix `not` for validators and rules
 -------------------------------------
-TODO
+
+You can prepend any rule or type validator with prefix "not" to get the logical negation of that rule or type validator:
+
+```php
+$number = 8;
+v::is($number)->int()->verify(); //true
+v::is($number)->notInt()->verify(); //false
+v::is($number)->dec()->verify(); //false
+v::is($number)->notDec()->verify(); //true
+
+$pi = 3.14;
+v::is($pi)->in('[-1,1]')->verify(); //false
+v::is($pi)->notIn('[-1,1]')->verify(); //true
+v::is($pi)->ineq('<=',3.0)->verify(); //false
+v::is($pi)->notIneq('<=',3.0)->verify(); //true
+```
 
 
 
 Changelog
 ---------
 
-### v0.6.0 [dev][Xx.yy-Zzz-2014]
+### v0.6.0 [master][Fr.23-May-2014]
 - New validator type: `dec()`
 - Added support for prefix `not` in all rules and type validators
 - Added support for Badge Poser tags in README.md
+- Verifier class tested against 484 unitary tests
 - Small code fixed
 
 ### v0.5.1 [master][Tu.20-May-2014]
