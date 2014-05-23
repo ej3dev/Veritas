@@ -444,10 +444,10 @@ class Verifier {
     public function notLen($operator,$value) {
         if( !is_int($value) ) throw new \ErrorException('Verifier->notLen() invalid parameter: $value must be an integer');
         if( $this->test == false ) return $this;
-        if( stripos('integer|double|string|array',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('integer|double|string|array',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
         $test = !( (new Verifier($this->data))->len($operator,$value)->verify() );
         
@@ -536,14 +536,14 @@ class Verifier {
     public function notIneq($operator,$value) {
         if( !is_numeric($value) ) throw new \ErrorException('Verifier->notIneq() invalid parameter: $value must be a numeric value');
         if( $this->test == false ) return $this;
-        if( stripos('integer|double|string',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
-        if( $this->dataType == 'string' && !is_numeric($this->data) ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('integer|double|string',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
+//        if( $this->dataType == 'string' && !is_numeric($this->data) ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
         $test = !( (new Verifier($this->data))->ineq($operator,$value)->verify() );
         
@@ -620,13 +620,14 @@ class Verifier {
      */
     public function notIn() {
         if( $this->test == false ) return $this;
-        if( stripos('integer|double|string',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('integer|double|string',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
-        $params = func_get_args();
-        $test = !( (new Verifier($this->data))->in($params)->verify() );
+        $v = new Verifier($this->data);
+        call_user_func_array(array($v,'in'),func_get_args());
+        $test = !( $v->verify() );
         
         $this->test &= $test;
         return $this;
@@ -701,13 +702,14 @@ class Verifier {
      */
     public function notOut() {
         if( $this->test == false ) return $this;
-        if( stripos('integer|double|string',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('integer|double|string',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
-        $params = func_get_args();
-        $test = !( (new Verifier($this->data))->out($params)->verify() );
+        $v = new Verifier($this->data);
+        call_user_func_array(array($v,'out'),func_get_args());
+        $test = !( $v->verify() );
         
         $this->test &= $test;
         return $this;
@@ -771,13 +773,14 @@ class Verifier {
      */
     public function notContain() {
         if( $this->test == false ) return $this;
-        if( stripos('string|array',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('string|array',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
-        $params = func_get_args();
-        $test = !( (new Verifier($this->data))->contain($params)->verify() );
+        $v = new Verifier($this->data);
+        call_user_func_array(array($v,'contain'),func_get_args());
+        $test = !( $v->verify() );
         
         $this->test &= $test;
         return $this;        
@@ -839,13 +842,14 @@ class Verifier {
      */
     public function notContainAny() {
         if( $this->test == false ) return $this;
-        if( stripos('string|array',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('string|array',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
-        $params = func_get_args();
-        $test = !( (new Verifier($this->data))->containAny($params)->verify() );
+        $v = new Verifier($this->data);
+        call_user_func_array(array($v,'containAny'),func_get_args());
+        $test = !( $v->verify() );
         
         $this->test &= $test;
         return $this;        
@@ -909,13 +913,14 @@ class Verifier {
      */
     public function notWithout() {
         if( $this->test == false ) return $this;
-        if( stripos('string|array',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('string|array',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
-        $params = func_get_args();
-        $test = !( (new Verifier($this->data))->without($params)->verify() );
+        $v = new Verifier($this->data);
+        call_user_func_array(array($v,'without'),func_get_args());
+        $test = !( $v->verify() );
         
         $this->test &= $test;
         return $this;        
@@ -970,10 +975,10 @@ class Verifier {
     public function notDate($format=null) {
         if( !is_null($format) && !is_string($format) ) throw new \ErrorException('Verifier->notDate() invalid parameter: $format must be a string');
         if( $this->test == false ) return $this;
-        if( stripos('string|object',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('string|object',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
         $test = !( (new Verifier($this->data))->date($format)->verify() );
         
@@ -1013,10 +1018,10 @@ class Verifier {
      */
     public function notValue($value,$strict=false) {
         if( $this->test == false ) return $this;
-        if( stripos('array|object',$this->dataType) === false ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( stripos('array|object',$this->dataType) === false ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
         $test = !( (new Verifier($this->data))->value($value,$strict)->verify() );
         
@@ -1070,13 +1075,14 @@ class Verifier {
     public function notKey() {
         if( func_num_args() == 0 ) throw new \ErrorException('Verifier->notKey() invalid number of parameters: key() must have at least 1 parameter');
         if( $this->test == false ) return $this;
-        if( $this->dataType != 'array' ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( $this->dataType != 'array' ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
-        $params = func_get_args();
-        $test = !( (new Verifier($this->data))->key($params)->verify() );
+        $v = new Verifier($this->data);
+        call_user_func_array(array($v,'key'),func_get_args());
+        $test = !( $v->verify() );
         
         $this->test &= $test;
         return $this;
@@ -1129,13 +1135,14 @@ class Verifier {
     public function notAttr() {
         if( func_num_args() == 0 ) throw new \ErrorException('Verifier->notAttr() invalid number of parameters: attr() must have at least 1 parameter');
         if( $this->test == false ) return $this;
-        if( $this->dataType != 'object' ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( $this->dataType != 'object' ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
-        $params = func_get_args();
-        $test = !( (new Verifier($this->data))->attr($params)->verify() );
+        $v = new Verifier($this->data);
+        call_user_func_array(array($v,'attr'),func_get_args());
+        $test = !( $v->verify() );
         
         $this->test &= $test;
         return $this;
@@ -1206,10 +1213,10 @@ class Verifier {
     public function notRegex($pattern) {
         if( !is_string($pattern) ) throw new \ErrorException('Verifier->notRegex() invalid parameter: $pattern must be a string');
         if( $this->test == false ) return $this;
-        if( $this->dataType != 'string' ) {
-            $this->test = false;
-            return $this;
-        }
+//        if( $this->dataType != 'string' ) {
+//            $this->test = false;
+//            return $this;
+//        }
         
         $test = !( (new Verifier($this->data))->regex($pattern)->verify() );
         

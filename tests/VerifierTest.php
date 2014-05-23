@@ -305,6 +305,29 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is(array())->len('==',1)->verify() );
     }
     
+    public function testNotLenException() {
+        $this->setExpectedException('ErrorException');
+        v::is('abc')->notLen('<=',3.14)->verify();
+    }
+    
+    public function testNotLen() {
+        //Integer & float
+        $this->assertFalse( v::is(-8)->notLen('==',2)->verify() );
+        $this->assertFalse( v::is(3.1416)->notLen('<=',6)->notLen('>=',6)->verify() );
+        $this->assertTrue( v::is(-8)->notLen('==',1)->verify() );
+        $this->assertTrue( v::is(3.1416)->notLen('!=',6)->verify() );
+        
+        //String
+        $this->assertFalse( v::is('abcd')->notLen('=',4)->verify() );
+        $this->assertFalse( v::is('abcd')->notLen('>',2)->len('<',5)->verify() );
+        $this->assertTrue( v::is('abcd')->notLen('<=',3)->verify() );
+        $this->assertTrue( v::is('abcd')->notLen('!=',4)->verify() );
+        
+        //Array
+        $this->assertFalse( v::is(array(1,2,3))->notLen('>',0)->len('<=',3)->verify() );
+        $this->assertTrue( v::is(array())->notLen('==',1)->verify() );
+    }
+    
     public function testEq() {
         //Boolean
         $this->assertTrue( v::is(true)->eq(true)->verify() );
@@ -438,6 +461,19 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is(33)->ineq('equal',33)->verify() );
     }
     
+    public function testNotIneqException() {
+        $this->setExpectedException('ErrorException');
+        v::is(8)->notIneq('<','nine')->verify();
+    }
+    
+    public function testNotIneq() {
+        $this->assertFalse( v::is(1)->notIneq('<',2)->verify() );
+        $this->assertTrue( v::is(1)->notIneq('>',2)->verify() );
+        $this->assertFalse( v::is(3.14)->notIneq('>=',3.0)->verify() );
+        $this->assertTrue( v::is(3.14)->notIneq('<=',3.0)->verify() );
+        $this->assertTrue( v::is(33)->notIneq('equal',33)->verify() );
+    }
+    
     public function testIn() {
         //Integer
         $this->assertTrue( v::is(8)->in(2,4,6,8)->verify() );
@@ -456,6 +492,26 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is('bye')->in('Hello world!')->verify() );
         $this->assertTrue( v::is('two')->in('one','two','three')->verify() );
         $this->assertFalse( v::is('four')->in('one','two','three')->verify() );
+    }
+    
+    public function testNotIn() {
+        //Integer
+        $this->assertFalse( v::is(8)->notIn(2,4,6,8)->verify() );
+        $this->assertTrue( v::is(5)->notIn(2,4,6,8)->verify() );
+        $this->assertFalse( v::is(3)->notIn('(-2,3]')->verify() );
+        $this->assertTrue( v::is(4)->notIn('[1,4)')->verify() );
+        
+        //Float
+        $this->assertFalse( v::is(3.14)->notIn(1,3.14,2.618)->verify() );
+        $this->assertTrue( v::is(2.618)->notIn(0,1.1,2,3.3)->verify() );
+        $this->assertFalse( v::is(3.14)->notIn('[0,3.15)')->verify() );
+        $this->assertTrue( v::is(2.618)->notIn('[2.62,3.14)')->verify() );
+        
+        //String
+        $this->assertFalse( v::is('wor')->notIn('Hello world!')->verify() );
+        $this->assertTrue( v::is('bye')->notIn('Hello world!')->verify() );
+        $this->assertFalse( v::is('two')->notIn('one','two','three')->verify() );
+        $this->assertTrue( v::is('four')->notIn('one','two','three')->verify() );
     }
     
     public function testOut() {
@@ -478,6 +534,26 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is('one')->out('one','two','three')->verify() );
     }
     
+    public function testNotOut() {
+        //Integer
+        $this->assertFalse( v::is(5)->notOut(2,4,6,8)->verify() );
+        $this->assertTrue( v::is(8)->notOut(2,4,6,8)->verify() );
+        $this->assertFalse( v::is(4)->notOut('(-2.2,4)')->verify() );
+        $this->assertTrue( v::is(3)->notOut('[1,3.0]')->verify() );
+        
+        //Float
+        $this->assertFalse( v::is(3.14)->notOut(0,1.1,2,3.3)->verify() );
+        $this->assertTrue( v::is(2.618)->notOut(1,3.14,2.618)->verify() );
+        $this->assertFalse( v::is(3.14)->notOut('[-1,1]')->verify() );
+        $this->assertTrue( v::is(2.618)->notOut('[0,3.14)')->verify() );
+        
+        //String
+        $this->assertFalse( v::is('bye')->notOut('Hello world!')->verify() );
+        $this->assertTrue( v::is('Hell')->notOut('Hello world!')->verify() );
+        $this->assertFalse( v::is('zero')->notOut('one','two','three')->verify() );
+        $this->assertTrue( v::is('one')->notOut('one','two','three')->verify() );
+    }
+    
     public function testContain() {
         //String
         $str = 'My name is Emi';
@@ -493,6 +569,23 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is($arr)->contain('TRES')->verify() );
         $this->assertFalse( v::is($arr)->contain(3)->verify() );
         $this->assertFalse( v::is($arr)->contain('uno','dos')->verify() );
+    }
+    
+    public function testNotContain() {
+        //String
+        $str = 'My name is Emi';
+        $this->assertFalse( v::is($str)->notContain('Emi')->verify() );
+        $this->assertFalse( v::is($str)->notContain('name','Emi')->verify() );
+        $this->assertTrue( v::is($str)->notContain('emi')->verify() );
+        $this->assertTrue( v::is($str)->notContain('surname','Emi')->verify() );
+        
+        //Array
+        $arr = array('one'=>'uno','two'=>2,3=>'tres');
+        $this->assertFalse( v::is($arr)->notContain('uno')->verify() );
+        $this->assertFalse( v::is($arr)->notContain(2,'tres')->verify() );
+        $this->assertTrue( v::is($arr)->notContain('TRES')->verify() );
+        $this->assertTrue( v::is($arr)->notContain(3)->verify() );
+        $this->assertTrue( v::is($arr)->notContain('uno','dos')->verify() );
     }
     
     public function testContainAny() {
@@ -514,6 +607,25 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is($arr)->containAny(1,'dos')->verify() );
     }
     
+    public function testNotContainAny() {
+        //String
+        $str = 'My name is Emi';
+        $this->assertFalse( v::is($str)->notContainAny('Emi')->verify() );
+        $this->assertFalse( v::is($str)->notContainAny('name','Emi')->verify() );
+        $this->assertFalse( v::is($str)->notContainAny('name','surname')->verify() );
+        $this->assertTrue( v::is($str)->notContainAny('emi')->verify() );
+        $this->assertTrue( v::is($str)->notContainAny('surname','Jiménez')->verify() );
+        
+        //Array
+        $arr = array('one'=>'uno','two'=>2,3=>'tres');
+        $this->assertFalse( v::is($arr)->notContainAny('uno')->verify() );
+        $this->assertFalse( v::is($arr)->notContainAny(2,'tres')->verify() );
+        $this->assertFalse( v::is($arr)->notContainAny('tres',4)->verify() );
+        $this->assertTrue( v::is($arr)->notContainAny('TRES')->verify() );
+        $this->assertTrue( v::is($arr)->notContainAny(3)->verify() );
+        $this->assertTrue( v::is($arr)->notContainAny(1,'dos')->verify() );
+    }
+    
     public function testWithout() {
         //String
         $str = 'My name is Emi';
@@ -529,6 +641,23 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue( v::is($arr)->without('uno','dos')->verify() );
         $this->assertFalse( v::is($arr)->without('uno')->verify() );
         $this->assertFalse( v::is($arr)->without(2,'tres')->verify() );
+    }
+    
+    public function testNotWithout() {
+        //String
+        $str = 'My name is Emi';
+        $this->assertFalse( v::is($str)->notWithout('emi')->verify() );
+        $this->assertFalse( v::is($str)->notWithout('name','Emilio')->verify() );
+        $this->assertTrue( v::is($str)->notWithout('Emi')->verify() );
+        $this->assertTrue( v::is($str)->notWithout('name','Emi')->verify() );
+        
+        //Array
+        $arr = array('one'=>'uno','two'=>2,3=>'tres');
+        $this->assertFalse( v::is($arr)->notWithout('TRES')->verify() );
+        $this->assertFalse( v::is($arr)->notWithout(3)->verify() );
+        $this->assertFalse( v::is($arr)->notWithout('uno','dos')->verify() );
+        $this->assertTrue( v::is($arr)->notWithout('uno')->verify() );
+        $this->assertTrue( v::is($arr)->notWithout(2,'tres')->verify() );
     }
     
     public function testDate() {
@@ -549,6 +678,26 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue( v::is('1977-11-06 13:01:02')->date('Y-m-d H:i:s')->verify() );
         $this->assertTrue( v::is('23:58 06-11-1977')->date('H:i d-m-Y')->verify() );
         $this->assertTrue( v::is(\DateTime::createFromFormat('Y-m-d','1977-11-06'))->date()->verify() );
+    }
+    
+    public function testNotDate() {
+        //Date
+        $this->assertFalse( v::is('19771106')->notDate('Ymd')->verify() );
+        $this->assertFalse( v::is('197711')->notDate('Ym')->verify() );
+        $this->assertFalse( v::is('1977')->notDate('Y')->verify() );
+        $this->assertTrue( v::is('19771100')->notDate('Ymd')->verify() );
+        $this->assertTrue( v::is(19771100)->notDate('Ymd')->verify() );
+        
+        //Time
+        $this->assertFalse( v::is('23:58:00')->notDate('H:i:s')->verify() );
+        $this->assertFalse( v::is('23:58')->notDate('H:i')->verify() );
+        $this->assertTrue( v::is('24:00')->notDate('H:i')->verify() );
+        $this->assertTrue( v::is('23:60')->notDate('H:i')->verify() );
+        
+        //Date & Time
+        $this->assertFalse( v::is('1977-11-06 13:01:02')->notDate('Y-m-d H:i:s')->verify() );
+        $this->assertFalse( v::is('23:58 06-11-1977')->notDate('H:i d-m-Y')->verify() );
+        $this->assertFalse( v::is(\DateTime::createFromFormat('Y-m-d','1977-11-06'))->notDate()->verify() );
     }
     
     public function testValue() {
@@ -572,6 +721,27 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is($obj)->value(3)->verify() );
     }
     
+    public function testNotValue() {
+        //Array
+        $arr = array('one'=>'uno','two'=>2,3=>'tres');
+        $this->assertFalse( v::is($arr)->notValue('uno')->verify() );
+        $this->assertFalse( v::is($arr)->notValue(2)->verify() );
+        $this->assertTrue( v::is($arr)->notValue('zero')->verify() );
+        $this->assertTrue( v::is($arr)->notValue('one')->verify() );
+        $this->assertTrue( v::is($arr)->notValue(3)->verify() );
+        
+        //Object
+        $obj = new \stdClass();
+        $obj->one = 'uno';
+        $obj->two = 2;
+        $obj->three = 'tres';
+        $this->assertFalse( v::is($obj)->notValue('uno')->verify() );
+        $this->assertFalse( v::is($obj)->notValue(2)->verify() );
+        $this->assertTrue( v::is($obj)->notValue('zero')->verify() );
+        $this->assertTrue( v::is($obj)->notValue('one')->verify() );
+        $this->assertTrue( v::is($obj)->notValue(3)->verify() );
+    }
+    
     public function testKeyException() {
         $this->setExpectedException('ErrorException');
         v::is(array(1,2,3))->key()->verify();
@@ -587,6 +757,23 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is($arr)->key('four')->verify() );
         $this->assertFalse( v::is($arr)->key('one',1)->verify() );
         $this->assertFalse( v::is($arr)->key('3',1,2,3)->verify() );
+    }
+    
+    public function testNotKeyException() {
+        $this->setExpectedException('ErrorException');
+        v::is(array(1,2,3))->notKey()->verify();
+    }
+    
+    public function testNotKey() {
+        $arr = array('one'=>'uno','two'=>2,3=>'tres');
+        
+        $this->assertFalse( v::is($arr)->notKey('one')->verify() );
+        $this->assertFalse( v::is($arr)->notKey('two',2)->verify() );
+        $this->assertFalse( v::is($arr)->notKey(3,'three','tres')->verify() );
+        $this->assertTrue( v::is($arr)->notKey(1)->verify() );
+        $this->assertTrue( v::is($arr)->notKey('four')->verify() );
+        $this->assertTrue( v::is($arr)->notKey('one',1)->verify() );
+        $this->assertTrue( v::is($arr)->notKey('3',1,2,3)->verify() );
     }
     
     public function testAttrException() {
@@ -606,6 +793,25 @@ class VerifierTest extends \PHPUnit_Framework_TestCase {
         $this->assertFalse( v::is($obj)->attr('two','dos')->verify() );
         $this->assertFalse( v::is($obj)->attr(3,'three','tres')->verify() );
         $this->assertFalse( v::is($obj)->attr('3',1,2,3)->verify() );
+    }
+    
+    public function testNotAttrException() {
+        $obj = (object)array('one'=>'uno','two'=>2,3=>'tres');
+        
+        $this->setExpectedException('ErrorException');
+        v::is($obj)->notAttr()->verify();
+    }
+    
+    public function testNotAttr() {
+        $obj = (object)array('one'=>'uno','two'=>2,3=>'tres');
+        
+        $this->assertFalse( v::is($obj)->notAttr('two')->verify() );
+        $this->assertFalse( v::is($obj)->notAttr('one','uno')->verify() );
+        $this->assertTrue( v::is($obj)->notAttr(2)->verify() );
+        $this->assertTrue( v::is($obj)->notAttr('zero')->verify() );
+        $this->assertTrue( v::is($obj)->notAttr('two','dos')->verify() );
+        $this->assertTrue( v::is($obj)->notAttr(3,'three','tres')->verify() );
+        $this->assertTrue( v::is($obj)->notAttr('3',1,2,3)->verify() );
     }
     
     public function testFilter() {
